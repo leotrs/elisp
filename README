@@ -1,0 +1,4 @@
+Repo containing all my personal elisp files.
+.emacs: Emacs configuration
+mff: my-favorite-files.el, a simple mode for opening frequently used files
+math-mode: my own mode for Mathematica code editing in Emacs
