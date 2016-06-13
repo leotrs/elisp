@@ -1,31 +1,43 @@
-;;; init.el --- personal Emacs config
-
+;;; init.el --- Leo's personal Emacs config.
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Commentary:
-;; Basic stuff: colors, layout, keybindings, etc.
-
+;;; Basic stuff like colors, layout, keybindings, etc.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Code:
+;;; Copy-pasted snippets have been attributed.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;;;;;;;;;;;;;
-;;; Directories
-;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Directories:
+;;; Global variables containing directories for custom major modes,
+;;; config files, etc.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defvar org-path "/home/leo/Desktop/org/")
 (defvar math-path "~/elisp/math-mode/")
 (defvar awesome-path "~/.config/awesome/")
 (defvar elisp-path "~/elisp/")
-(defvar elpa-path "~/.emacs.d/elpa/")
 (defvar mathematica-path "~/.Mathematica/")
 (add-to-list 'load-path elisp-path)
-(add-to-list 'load-path elpa-path)
 (add-to-list 'load-path math-path)
 
-;; save all backups to the same dir
-;; taken from avdi's blog: http://bit.ly/qACeGz
+;; Save all backups to the same dir, instead of placing every backup in the
+;; original file's directory. Taken from avdi's blog: http://bit.ly/qACeGz
 (setq backup-directory-alist
       (list (cons "." (expand-file-name "backup" user-emacs-directory))))
 
-;;;;;;;;;;;;;;;;;;;;;;;
-;;; Gui & startup stuff
-;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Gui:
+;;; Transparency, bars, cursors.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (modify-all-frames-parameters '((alpha . 90)))
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -34,112 +46,147 @@
 (setq inhibit-startup-screen t)
 (setq initial-scratch-message ";; Happy hacking Leo!\n\n")
 
-;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Some random tweaks
-;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Non-nil to allow minibuffer commands while in the minibuffer.
 (setq enable-recursive-minibuffers t)
+
+;; Truncate instead of wrap lines.
 (set-default 'truncate-lines t)
-(setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "google-chrome")
+
+;; Activate narrow-to-region.
 (put 'narrow-to-region 'disabled nil)
-(defalias 'yes-or-no-p 'y-or-n-p)
-(defalias 'qrr 'query-replace-regexp)
+
+;; This is just common sense.
 (setq tab-width 4)
 
 
-;;;;;;;;;;;;
-;;; Packages
-;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Aliased commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defalias 'qrr 'query-replace-regexp)
+
+;; Every prompt for yes-or-no will now accept y-or-n (faster typing).
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Package management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (require 'package)
 (setq package-archives
       '(("marmalade" . "http://marmalade-repo.org/packages/")
 	("ELPA" . "http://tromey.com/elpa/")
 	("gnu" . "http://elpa.gnu.org/packages/")
 	("melpa" . "http://melpa.milkbox.net/packages/")))
-(add-to-list 'package-archives
-	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
+
+(defvar elpa-path "~/.emacs.d/elpa/")
+(add-to-list 'load-path elpa-path)
+
 (package-initialize)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Themes & Visual stuff
-;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-(load-theme 'solarized-light t)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Themes, fonts and visual stuff
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (setq font-lock-maximum-decoration t)
-(show-paren-mode 1)
 (set-face-attribute 'default nil :height 180)
+
+(show-paren-mode 1)
 (setq-default fill-column 80)
 
-;;;;;;;;;;;;;;;;;;;;;;;
-;;; Various mode setups
-;;;;;;;;;;;;;;;;;;;;;;;
-;;; Social
-;; (require 'twittering-mode)
-;; (setq twittering-use-master-password t)
-;; (setq twittering-icon-mode t)
-;; (setq twittering-timer-interval 300)
-;; (setq twittering-url-show-status nil)
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(load-theme 'solarized-light t)
 
-;; (require 'jabber)
-;; (set-face-attribute 'jabber-activity-face nil		:foreground "dark orange"	:weight 'bold)
-;; (set-face-attribute 'jabber-activity-personal-face nil	:foreground "deep sky blue"	:weight 'bold)
-;; (set-face-attribute 'jabber-roster-user-online	nil	:foreground "peru"		:weight 'normal)
-;; (set-face-attribute 'jabber-chat-prompt-foreign	nil	:foreground "light steel blue"	:weight 'bold)
-;; (set-face-attribute 'jabber-chat-prompt-local nil	:foreground "OliveDrab1"	:weight 'bold)
-;; (setq jabber-vcard-avatars-retrieve t)
-;; (setq jabber-roster-line-format " %a %-25n")
-;; (setq jabber-chat-buffer-format "*%n-chat*")
-;; (setq jabber-alert-message-hooks '(jabber-message-awesome jabber-message-scroll))
 
-;;; Languages and linters
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Language mode setups
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;
+;;; Python
+;;;;;;;;;;;;;;;
+
 (require 'python-mode)
-(setq py-python-command "python3")
-;; (setq python-shell-interpreter "/usr/bin/python3.5")
-(setq python-shell-interpreter "/usr/bin/python2.7")
 (autoload 'python-mode "python-mode" "Python Mode." t)
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
+
+;; Damn python versions...
+;; (setq py-python-command "python3")
+(setq py-python-command "python2.7")
 (add-to-list 'interpreter-mode-alist '("python3" . python-mode))
+
+;; By default, python-mode splits the window vertically when opening the shell
+;; or executing code from a buffer. These lines change that.
+(setq-default py-split-windows-on-execute-function 'split-window-horizontally)
+(setq-default py-split-window-on-execute t)
+
+;; Python mode hooks
 (add-hook 'python-mode-hook
 	  (lambda ()
-		(add-to-list 'write-file-functions 'delete-trailing-whitespace)
-		(define-key python-mode-map (kbd "C-c i") 'py-shell)))
+	    ;; Delete trailing whitespace at every save for the linter's sanity.
+	    (add-to-list 'write-file-functions 'delete-trailing-whitespace)
 
+	    ;; The default keybinding in python-mode to run the shell is C-c !
+	    ;; which gets shadowed by Flycheck. Instead, we add a command to run
+	    ;; the shell and jump into it, with an available key chord.
+	    (define-key python-mode-map (kbd "C-c i") 'py-switch-to-shell)))
+
+;;;;;;;;;;;;;;;;
+;; Haskell
+;;;;;;;;;;;;;;;;
+
+(require 'haskell-mode)
+
+;; Thanks: http://bit.ly/25SUWBV
+(defun my-haskell-mode-hook ()
+  "Setup correct indentation for Haskell mode."
+   (haskell-indentation-mode -1)
+   (haskell-indent-mode 1))
+
+(add-hook 'haskell-mode-hook 'my-haskell-mode-hook)
+
+;;;;;;;;;;;;;;;;
+;; Others
+;;;;;;;;;;;;;;;;
 
 (require 'lua-mode)
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
 (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
 
 (require 'markdown-mode)
-(add-to-list 'auto-mode-alist '("\\.Mmd\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.Mmd\\'" . markdown-mode))
 
 (require 'Mathematica-mode)
 (autoload 'math-edit-mode "math-edit-mode" "Mathematica editing mode." t)
 (add-to-list 'auto-mode-alist '("\\.m\\'" . math-edit-mode))
 
-(require 'haskell-mode)
-(add-hook 'haskell-mode-hook 'my-haskell-mode-hook)
-
-;; Thanks: https://stackoverflow.com/questions/4887452/forcing-haskell-indent-mode-over-haskell-indentation-mode-in-haskell-mode-2-7
-(defun my-haskell-mode-hook ()
-  "Setup correct indentation for Haskell mode."
-   (haskell-indentation-mode -1)
-   (haskell-indent-mode 1))
-
-;; Linter and snippets
-(add-hook 'after-init-hook #'global-flycheck-mode)
-(yas-global-mode)
 
 
-;;; Misc
-;; (require 'paredit)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Various major mode setups
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (require 'ido)
 (ido-mode t)
 
+(require 'org-install)
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+
+;; my-favorite-files
 (require 'mff)
 (mff-add-files (("." . "~/elisp/init.el")
-		("t" . (concat org-path "todo.org"))
-		;; ("a" . (concat org-path "agenda.org"))
 		("r" . (concat awesome-path "rc.lua"))
 		("d" . (concat math-path "math-mode-defs.el"))
 		("m" . (concat math-path "math-edit-mode.el"))
@@ -148,19 +195,60 @@
 		("y" . (concat elisp-path "mff.el"))
 		("k" . (concat mathematica-path "Kernel/init.m"))))
 
-;;; Org
-(require 'org-install)
-(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-;;;;;;;;;;;;;;;;;;;
-;;; Custom commands
-;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Various minor mode setups
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Flycheck for linter
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+;; Yasnippets for code snippets
+(yas-global-mode)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Window management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Replace other-window with ace-window
+(global-set-key (kbd "C-x o") 'ace-window)
+
+;; Force the flycheck error list window to always appear at the bottom
+(add-to-list 'display-buffer-alist
+             `(,(rx bos "*Flycheck errors*" eos)
+               (display-buffer-reuse-window display-buffer-in-side-window)
+               (side            . bottom)
+               (window-height   . 0.3)))
+
+;; Replace the default functionality of "C-c ! l" to open the list window and
+;; select it.
+(defun flycheck-list-errors-and-select ()
+  "Display the list of errors and select the window."
+  (interactive)
+  (progn
+    (flycheck-list-errors)
+    (select-window (get-buffer-window "*Flycheck errors*"))))
+
+(add-hook 'flycheck-mode-hook
+	  (lambda ()
+	    (define-key flycheck-mode-map (kbd "C-c ! l") 'flycheck-list-errors-and-select)))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Custom text commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun insert-or-wrap (first last)
   "Do what I mean insertion of FIRST and LAST.
-Usually, insert the characters FIRST and LAST at point and steps
-back in between them.  If 'transient-mark-mode' is non-nil and
-mark is active, wrap the region between start and end with the
-characters FIRST and LAST and leave the mark at the first one."
+By default, insert the characters FIRST and LAST at point and
+step back in between them.  If 'transient-mark-mode' is non-nil
+and mark is active, wrap the region between start and end with
+the characters FIRST and LAST and leave the mark at the first
+one."
   (if (and mark-active transient-mark-mode)
       (save-restriction
 	;; narrow is necessary because we are inserting chars
@@ -183,15 +271,22 @@ characters FIRST and LAST and leave the mark at the first one."
 	  (re-search-forward "[ \t\r\n]+" nil t)
 	  (replace-match "" nil nil))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Expansions / Completions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (setq hippie-expand-try-functions-list
       (quote (try-expand-dabbrev try-expand-dabbrev-all-buffers try-expand-all-abbrevs try-expand-dabbrev-from-kill
 				 try-expand-line try-expand-list
 				 try-complete-file-name try-complete-file-name-partially
 				 try-complete-lisp-symbol-partially try-complete-lisp-symbol)))
 
-;;;;;;;;;;;;;;;
-;;; Keybindings
-;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Global keybindings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (global-set-key (kbd "C-ñ") mff-mode-map)
 (global-set-key (kbd "C-x C-b") 'ibuffer-other-window)
 (global-set-key (kbd "C-.") (lambda () (interactive) (hippie-expand nil)))
@@ -210,6 +305,11 @@ characters FIRST and LAST and leave the mark at the first one."
 
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Done!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'init)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init.el ends here
