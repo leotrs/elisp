@@ -117,15 +117,6 @@
 ;;; Python
 ;;;;;;;;;;;;;;;
 
-(require 'python-mode)
-(autoload 'python-mode "python-mode" "Python Mode." t)
-(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
-
-;; Damn python versions...
-;; (setq py-python-command "python3")
-(setq py-python-command "python2.7")
-(add-to-list 'interpreter-mode-alist '("python3" . python-mode))
-
 ;; By default, python-mode splits the window vertically when opening the shell
 ;; or executing code from a buffer. These lines change that.
 (setq-default py-split-windows-on-execute-function 'split-window-horizontally)
@@ -140,7 +131,23 @@
 	    ;; The default keybinding in python-mode to run the shell is C-c !
 	    ;; which gets shadowed by Flycheck. Instead, we add a command to run
 	    ;; the shell and jump into it, with an available key chord.
-	    (define-key python-mode-map (kbd "C-c i") 'py-switch-to-shell)))
+	    (define-key python-mode-map (kbd "C-c i") 'run-python)
+
+	    ;; From comments inside python-mode: '[...]The specialized
+	    ;; python-nav-forward-sexp allows easy navigation between code
+	    ;; blocks. If you prefer cc-mode-like forward-sexp movement, setting
+	    ;; forward-sexp-function to nil is enough[...]'
+	    (setq forward-sexp-function nil)))
+
+;; Thanks james! https://github.com/porterjamesj/virtualenvwrapper.el
+(require 'virtualenvwrapper)
+
+(add-hook 'venv-postactivate-hook
+	  (lambda () (flycheck-buffer)))
+
+(setq
+ python-shell-interpreter "ipython"
+ python-shell-interpreter-args "-i")
 
 ;;;;;;;;;;;;;;;;
 ;; Haskell
