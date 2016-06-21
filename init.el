@@ -188,6 +188,13 @@
 (require 'ido)
 (ido-mode t)
 
+(require 'smex)
+(smex-initialize)
+
+
+(require 'popwin)
+(popwin-mode 1)
+
 (require 'org-install)
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
@@ -221,7 +228,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Replace other-window with ace-window
-(global-set-key (kbd "C-x o") 'ace-window)
+
 
 ;; Force the flycheck error list window to always appear at the bottom
 (add-to-list 'display-buffer-alist
@@ -278,6 +285,8 @@ one."
 	  (re-search-forward "[ \t\r\n]+" nil t)
 	  (replace-match "" nil nil))))))
 
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Expansions / Completions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -294,13 +303,23 @@ one."
 ;;; Global keybindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; some custom commands for modes
 (global-set-key (kbd "C-ñ") mff-mode-map)
+
+;; replacement of some defaults
+(global-set-key (kbd "C-z") 'undo)	;replaces zap-to-char
+(global-set-key (kbd "M-x") 'smex)	;on top of M-x
+(global-set-key (kbd "C-x o") 'ace-window) ;replaces other-window
+(global-set-key (kbd "<menu>") 'smex)	   ;replaces <menu>, prev M-x
 (global-set-key (kbd "C-x C-b") 'ibuffer-other-window)
-(global-set-key (kbd "C-.") (lambda () (interactive) (hippie-expand nil)))
-(global-set-key (kbd "C-+") 'kill-whitespace)
-(global-set-key (kbd "C-z") 'shell)
-(global-set-key (kbd "M-z") 'end-of-buffer)
+
+;; navigation
+(global-set-key (kbd "M-n") 'forward-paragraph)
+(global-set-key (kbd "M-p") 'backward-paragraph)
+(global-set-key (kbd "M-z") 'end-of-buffer) ;replaces zap-to-char
 (global-set-key (kbd "M-Z") 'beginning-of-buffer)
+
+;; insert-or-wrap
 (global-set-key (kbd "H-h") (lambda () (interactive) (insert-or-wrap "<" ">")))
 (global-set-key (kbd "H-j") (lambda () (interactive) (insert-or-wrap "(" ")")))
 (global-set-key (kbd "H-k") (lambda () (interactive) (insert-or-wrap "[" "]")))
@@ -309,6 +328,10 @@ one."
 (global-set-key (kbd "H-p") (lambda () (interactive) (insert-or-wrap "'" "'")))
 (global-set-key (kbd "H-o") (lambda () (interactive) (insert-or-wrap "`" "`")))
 (global-set-key (kbd "H-i") (lambda () (interactive) (insert-or-wrap "```\n" "\n```")))
+
+;; other text editing
+(global-set-key (kbd "C-.") (lambda () (interactive) (hippie-expand nil)))
+(global-set-key (kbd "C-+") 'kill-whitespace)
 
 
 
