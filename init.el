@@ -132,6 +132,8 @@
 	    ;; which gets shadowed by Flycheck. Instead, we add a command to run
 	    ;; the shell and jump into it, with an available key chord.
 	    (define-key python-mode-map (kbd "C-c i") 'run-python)
+	    (define-key python-mode-map (kbd "C-c j") 'python-indent-shift-left)
+	    (define-key python-mode-map (kbd "C-c k") 'python-indent-shift-right)
 
 	    ;; From comments inside python-mode: '[...]The specialized
 	    ;; python-nav-forward-sexp allows easy navigation between code
@@ -308,6 +310,7 @@ one."
 
 ;; replacement of some defaults
 (global-set-key (kbd "C-z") 'undo)	;replaces zap-to-char
+(global-set-key (kbd "C-x u") nil)
 (global-set-key (kbd "M-x") 'smex)	;on top of M-x
 (global-set-key (kbd "C-x o") 'ace-window) ;replaces other-window
 (global-set-key (kbd "<menu>") 'smex)	   ;replaces <menu>, prev M-x
