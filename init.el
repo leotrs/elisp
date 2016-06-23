@@ -102,7 +102,7 @@
 (set-face-attribute 'default nil :height 180)
 
 (show-paren-mode 1)
-(setq-default fill-column 80)
+(setq-default fill-column 75)
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (load-theme 'solarized-light t)
@@ -290,6 +290,28 @@ one."
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Mark commands:
+;;; Make exchange-point-and-mark behave as before transient-mark-mode was a
+;;; thing.
+;;; Thanks: http://bit.ly/28QP9Vn
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun push-mark-no-activate ()
+  "Push `point' to `mark-ring' and do not activate the region.
+Equivalent to \\[set-mark-command] when \\[transient-mark-mode] is disabled"
+  (interactive)
+  (push-mark (point) t nil)
+  (message "Pushed mark to ring"))
+
+(defun exchange-point-and-mark-no-activate ()
+  "Identical to \\[exchange-point-and-mark] but will not activate the region."
+  (interactive)
+  (exchange-point-and-mark)
+  (deactivate-mark nil))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Expansions / Completions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -315,6 +337,17 @@ one."
 (global-set-key (kbd "C-x o") 'ace-window) ;replaces other-window
 (global-set-key (kbd "<menu>") 'smex)	   ;replaces <menu>, prev M-x
 (global-set-key (kbd "C-x C-b") 'ibuffer-other-window)
+
+(global-set-key (kbd "C-M-s") 'isearch-forward) ;use regex search as default
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-M-r") nil)	;to search backward just do C r
+(global-set-key (kbd "C-r") nil)	;from within isearch
+
+(global-set-key (kbd "C-x SPC") 'push-mark-no-activate)
+(global-set-key (kbd "C-x C-x") 'exchange-point-and-mark-no-activate)
+
+(global-set-key (kbd "C-r") 'query-replace-regexp)	;use the newly available C-r for qrr
+(global-set-key (kbd "C-M-%") nil)
 
 ;; navigation
 (global-set-key (kbd "M-n") 'forward-paragraph)
