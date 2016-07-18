@@ -212,6 +212,7 @@ the alist, pop up the usual *scratch* buffer."
 (require 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.Mmd\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.mdpp\\'" . markdown-mode))
 
 (require 'Mathematica-mode)
 (autoload 'math-edit-mode "math-edit-mode" "Mathematica editing mode." t)
@@ -402,6 +403,7 @@ Equivalent to \\[set-mark-command] when \\[transient-mark-mode] is disabled"
 (global-set-key (kbd "H-p") (lambda () (interactive) (insert-or-wrap "'" "'")))
 (global-set-key (kbd "H-o") (lambda () (interactive) (insert-or-wrap "`" "`")))
 (global-set-key (kbd "H-i") (lambda () (interactive) (insert-or-wrap "```\n" "\n```")))
+(global-set-key (kbd "H-u") (lambda () (interactive) (insert-or-wrap "*" "*")))
 
 ;; other text editing
 (global-set-key (kbd "C-.") (lambda () (interactive) (hippie-expand nil)))
