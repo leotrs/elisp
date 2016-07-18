@@ -218,18 +218,24 @@ the alist, pop up the usual *scratch* buffer."
 (autoload 'math-edit-mode "math-edit-mode" "Mathematica editing mode." t)
 (add-to-list 'auto-mode-alist '("\\.m\\'" . math-edit-mode))
 
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+(add-hook 'web-mode-hook (lambda () (setq-default indent-tabs-mode nil)))
+
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Various major mode setups
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(add-hook 'text-mode-hook 'flyspell-mode)
+
 (require 'ido)
 (ido-mode t)
 
 (require 'smex)
 (smex-initialize)
-
 
 (require 'popwin)
 (popwin-mode 1)
@@ -382,11 +388,11 @@ Equivalent to \\[set-mark-command] when \\[transient-mark-mode] is disabled"
 (global-set-key (kbd "C-M-r") nil)	;to search backward just do C r
 (global-set-key (kbd "C-r") nil)	;from within isearch
 
-(global-set-key (kbd "C-x SPC") 'push-mark-no-activate)
-(global-set-key (kbd "C-x C-x") 'exchange-point-and-mark-no-activate)
-
 (global-set-key (kbd "C-r") 'query-replace-regexp)	;use the newly available C-r for qrr
 (global-set-key (kbd "C-M-%") nil)
+
+(global-set-key (kbd "C-x SPC") 'push-mark-no-activate)
+(global-set-key (kbd "C-x C-x") 'exchange-point-and-mark-no-activate)
 
 ;; navigation
 (global-set-key (kbd "M-n") 'forward-paragraph)
