@@ -30,7 +30,8 @@
 ;; original file's directory. Taken from avdi's blog: http://bit.ly/qACeGz
 (setq backup-directory-alist
       (list (cons "." (expand-file-name "backup" user-emacs-directory))))
-
+(setq auto-save-file-name-transforms
+      `((".*" , (expand-file-name "autosave" user-emacs-directory) t)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
