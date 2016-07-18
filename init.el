@@ -44,7 +44,6 @@
 (menu-bar-mode -1)
 (blink-cursor-mode 1)
 (setq inhibit-startup-screen t)
-(setq initial-scratch-message ";; Happy hacking Leo!\n\n")
 
 
 
@@ -107,6 +106,42 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (load-theme 'solarized-light t)
 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Scratch setup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; The *scratch* buffer is set to markdown-mode, while a new functionality,
+;; M-x scratch is defined. This command opens a new empty buffer similar to
+;; the original *scratch* but which defaults to the major mode of the
+;; buffer it was launched fromm.
+
+(setq initial-major-mode 'markdown-mode)
+(setq initial-scratch-message "# Happy hacking Leo!\n\n")
+
+(setq scratch-names-alist
+      '((python-mode . "*py-scratch*")
+        (emacs-lisp-mode . "*el-scratch*")))
+
+(defun scratch ()
+  "Pop or create a scratch buffer with an appropriate major mode.
+Here, a scratch buffer is a temporal buffer whose name is
+surrounded by asterisks, so that Emacs doesn't prompt to save
+when it is killed.  The major mode of the scratch buffer is set
+to that of the buffer from which this function is called.  The
+name of the scratch buffer is defined on a per-major-mode basis,
+in scratch-names-alist.  If a buffer's major mode is not found in
+the alist, pop up the usual *scratch* buffer."
+  (interactive)
+  (let* ((buffer-major-mode (buffer-local-value
+			     'major-mode (current-buffer)))
+	 (scratch-name (or (cdr (assoc buffer-major-mode
+				       scratch-names-alist)) "*scratch*"))
+	 (buffer (get-buffer-create scratch-name)))
+    (with-current-buffer buffer
+      (funcall buffer-major-mode))
+    (pop-to-buffer buffer)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -329,6 +364,8 @@ Equivalent to \\[set-mark-command] when \\[transient-mark-mode] is disabled"
 
 ;; some custom commands for modes
 (global-set-key (kbd "C-ñ") mff-mode-map)
+(global-set-key (kbd "C-c s") 'scratch)
+
 
 ;; replacement of some defaults
 (global-set-key (kbd "C-z") 'undo)	;replaces zap-to-char
