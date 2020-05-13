@@ -34,6 +34,7 @@
       `((".*" , (expand-file-name "autosave" user-emacs-directory) t)))
 
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Gui:
 ;;; Transparency, bars, cursors.
@@ -63,6 +64,7 @@
 
 ;; This is just common sense.
 (setq tab-width 4)
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -99,14 +101,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq font-lock-maximum-decoration t)
-(set-face-attribute 'default nil :height 180)
+(set-face-attribute 'default nil :height 160)
 
 (show-paren-mode 1)
 (setq-default fill-column 75)
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-(load-theme 'solarized-light t)
-
+;; (load-theme 'solarized-light t)
+;; (load-theme 'silkworm t)
+(load-theme 'sanityinc-tomorrow-day t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -116,7 +119,7 @@
 ;; The *scratch* buffer is set to markdown-mode, while a new functionality,
 ;; M-x scratch is defined. This command opens a new empty buffer similar to
 ;; the original *scratch* but which defaults to the major mode of the
-;; buffer it was launched fromm.
+;; buffer it was launched from.
 
 (setq initial-major-mode 'markdown-mode)
 (setq initial-scratch-message "# Happy hacking Leo!\n\n")
@@ -142,7 +145,7 @@ the alist, pop up the usual *scratch* buffer."
 	 (buffer (get-buffer-create scratch-name)))
     (with-current-buffer buffer
       (funcall buffer-major-mode))
-    (pop-to-buffer buffer)))
+    (switch-to-buffer buffer)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -177,6 +180,18 @@ the alist, pop up the usual *scratch* buffer."
 	    ;; forward-sexp-function to nil is enough[...]'
 	    (setq forward-sexp-function nil)))
 
+;; Make flycheck play nicely when within a virtualenv.
+;; Based on https://stackoverflow.com/questions/31443527/how-can-i-make-flycheck-use-virtualenv
+;; (defun set-flychecker-executables ()
+;;   "Configure virtualenv for flake8 and lint."
+;;   (when venv-current-dir
+;;     (flycheck-set-checker-executable (quote python-pylint)
+;;                                      (expand-file-name "bin/pylint" venv-current-dir))
+;;     (flycheck-set-checker-executable (quote python-flake8)
+;;                                      (expand-file-name "bin/flake8" venv-current-dir))))
+;; (add-hook 'flycheck-before-syntax-check-hook
+;;           #'set-flychecker-executables 'local)
+
 ;; Thanks james! https://github.com/porterjamesj/virtualenvwrapper.el
 (require 'virtualenvwrapper)
 
@@ -185,7 +200,8 @@ the alist, pop up the usual *scratch* buffer."
 
 (setq
  python-shell-interpreter "ipython"
- python-shell-interpreter-args "-i")
+ python-shell-interpreter-args "-i --simple-prompt --no-banner")
+
 
 ;;;;;;;;;;;;;;;;
 ;; Haskell
@@ -213,14 +229,20 @@ the alist, pop up the usual *scratch* buffer."
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.Mmd\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.mdpp\\'" . markdown-mode))
+;; python mode leaves 'delete-trailing-whitespace inside 'write-file-functions
+(add-hook 'markdown-mode-hook
+	  (lambda ()
+	    (setq write-file-functions ())))
 
-(require 'Mathematica-mode)
-(autoload 'math-edit-mode "math-edit-mode" "Mathematica editing mode." t)
-(add-to-list 'auto-mode-alist '("\\.m\\'" . math-edit-mode))
+;; (require 'Mathematica-mode)
+;; (autoload 'math-edit-mode "math-edit-mode" "Mathematica editing mode." t)
+;; (add-to-list 'auto-mode-alist '("\\.m\\'" . math-edit-mode))
 
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-(add-hook 'web-mode-hook (lambda () (setq-default indent-tabs-mode nil)))
+(add-hook 'web-mode-hook (lambda ()
+                           (setq-default indent-tabs-mode nil)
+                           (setq web-mode-markup-indent-offset 2)))
 
 
 
@@ -247,12 +269,8 @@ the alist, pop up the usual *scratch* buffer."
 (require 'mff)
 (mff-add-files (("." . "~/elisp/init.el")
 		("r" . (concat awesome-path "rc.lua"))
-		("d" . (concat math-path "math-mode-defs.el"))
-		("m" . (concat math-path "math-edit-mode.el"))
-		("c" . (concat math-path "math-comint-mode.el"))
-		("M" . (concat elisp-path "Mathematica-mode.el"))
 		("y" . (concat elisp-path "mff.el"))
-		("k" . (concat mathematica-path "Kernel/init.m"))))
+		))
 
 
 
@@ -265,6 +283,8 @@ the alist, pop up the usual *scratch* buffer."
 
 ;; Yasnippets for code snippets
 (yas-global-mode)
+
+(add-hook 'term-mode-hook (lambda() (yas-minor-mode -1)))
 
 
 
@@ -331,6 +351,15 @@ one."
 	  (replace-match "" nil nil))))))
 
 
+;; Thanks Lindsey Kuper!
+;; https://recurse.zulipchat.com/#narrow/near/106526834/stream/Victory/topic/long.20email.20sent
+(defun unfill-paragraph ()
+  "Takes a multi-line paragraph and makes it into a single line
+of text."
+  (interactive)
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Mark commands:
@@ -370,6 +399,10 @@ Equivalent to \\[set-mark-command] when \\[transient-mark-mode] is disabled"
 ;;; Global keybindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; who needs this?
+(global-set-key (kbd "<insert>") nil)
+(global-set-key (kbd "C-x C-z") nil)
+
 ;; some custom commands for modes
 (global-set-key (kbd "C-ñ") mff-mode-map)
 (global-set-key (kbd "C-c s") 'scratch)
@@ -379,9 +412,10 @@ Equivalent to \\[set-mark-command] when \\[transient-mark-mode] is disabled"
 (global-set-key (kbd "C-z") 'undo)	;replaces zap-to-char
 (global-set-key (kbd "C-x u") nil)
 (global-set-key (kbd "M-x") 'smex)	;on top of M-x
-(global-set-key (kbd "C-x o") 'ace-window) ;replaces other-window
+;; (global-set-key (kbd "C-x o") 'ace-window) ;replaces other-window
 (global-set-key (kbd "<menu>") 'smex)	   ;replaces <menu>, prev M-x
 (global-set-key (kbd "C-x C-b") 'ibuffer-other-window)
+(global-set-key (kbd "C-x k") 'kill-this-buffer) ;replaces kill-buffer
 
 (global-set-key (kbd "C-M-s") 'isearch-forward) ;use regex search as default
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
@@ -410,6 +444,9 @@ Equivalent to \\[set-mark-command] when \\[transient-mark-mode] is disabled"
 (global-set-key (kbd "H-o") (lambda () (interactive) (insert-or-wrap "`" "`")))
 (global-set-key (kbd "H-i") (lambda () (interactive) (insert-or-wrap "```\n" "\n```")))
 (global-set-key (kbd "H-u") (lambda () (interactive) (insert-or-wrap "*" "*")))
+(global-set-key (kbd "H-4") (lambda () (interactive) (insert-or-wrap "$" "$")))
+(global-set-key (kbd "H-8") (lambda () (interactive) (insert-or-wrap "\\(" "\\)")))
+(global-set-key (kbd "H-+") (lambda () (interactive) (insert-or-wrap "\\[" "\\]")))
 
 ;; other text editing
 (global-set-key (kbd "C-.") (lambda () (interactive) (hippie-expand nil)))
